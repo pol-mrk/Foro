@@ -1,0 +1,284 @@
+/* Estilos generales */
+.cuerpo {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.caja-contenedor {
+    margin: 0 auto;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Encabezado general */
+.encabezado {
+    background-color: #075E54;
+    color: #ffffff;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Buscar amigos */
+.formulario-busqueda {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.input-busqueda {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.boton-buscar {
+    padding: 8px 15px;
+    background-color: #25D366;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.boton-buscar:hover {
+    background-color: #128C7E;
+}
+
+.lista-usuario {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nombre-usuario {
+    font-weight: bold;
+    color: #333;
+}
+
+.estado-usuario {
+    color: #888;
+}
+
+.boton-solicitar, .boton-cancelar-solicitud, .boton-aceptar, .boton-rechazar {
+    padding: 8px 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.boton-solicitar {
+    background-color: #25D366;
+}
+
+.boton-cancelar-solicitud, .boton-rechazar {
+    background-color: #FF3B30;
+}
+
+.boton-aceptar {
+    background-color: #128C7E;
+}
+
+.boton-solicitar:hover, .boton-aceptar:hover {
+    background-color: #075E54;
+}
+
+/* Página de solicitudes */
+.lista-solicitud {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.nombre-solicitud {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Página de chat */
+.contenedor-mensajes {
+    padding: 15px;
+    height: 400px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+    background-color: #e5ddd5;
+}
+
+.contenedor-mensajes::-webkit-scrollbar {
+    /* Oculta la barra de scroll */
+    display: none;
+}
+
+.mensaje-mio {
+    background-color: #DCF8C6;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    margin-left: auto;
+    max-width: calc(100% - 1340px);
+    align-self: flex-end;
+    text-align: right;
+}
+
+.mensaje-suyo {
+    background-color: #ffffff;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    margin-right: auto;
+    max-width: calc(100% - 1340px);
+    align-self: flex-start;
+    text-align: left;
+}
+
+.caja-mensaje {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.input-mensaje {
+    width: 1416px;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.boton-enviar {
+    padding: 8px 15px;
+    background-color: #25D366;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.boton-enviar:hover {
+    background-color: #128C7E;
+}
+
+/* Página de amigos */
+.contenedor-amigos {
+    padding: 15px;
+}
+
+.link-amigo {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.estado-amigo {
+    color: #888;
+    font-size: 0.9em;
+    margin-top: -5px;
+}
+
+@media screen and (min-width: 500px) {
+
+    .mensaje-mio {
+        background-color: #DCF8C6;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-left: auto;
+        max-width: calc(100% - 320px);
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .mensaje-suyo {
+        background-color: #ffffff;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-right: auto;
+        max-width: calc(100% - 320px);
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .input-mensaje {
+        width: 373px;
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+}
+
+@media screen and (min-width: 750px) {
+
+    .mensaje-mio {
+        background-color: #DCF8C6;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-left: auto;
+        max-width: calc(100% - 580px);
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .mensaje-suyo {
+        background-color: #ffffff;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-right: auto;
+        max-width: calc(100% - 580px);
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .input-mensaje {
+        width: 640px;
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+}
+
+@media screen and (min-width: 1500px) {
+
+    .mensaje-mio {
+        background-color: #DCF8C6;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-left: auto;
+        max-width: calc(100% - 1340px);
+        align-self: flex-end;
+        text-align: right;
+    }
+    
+    .mensaje-suyo {
+        background-color: #ffffff;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        margin-right: auto;
+        max-width: calc(100% - 1340px);
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .input-mensaje {
+        width: 1416px;
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+}
