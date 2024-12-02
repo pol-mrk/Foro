@@ -16,9 +16,7 @@
         $buscar_nombre = isset($_GET['buscarNombre']) ? htmlspecialchars($_GET['buscarNombre']) : '';
         $buscar_titulo = isset($_GET['buscarTitulo']) ? htmlspecialchars($_GET['buscarTitulo']) : '';    
         
-        $paginas = isset($_GET['pagina']) ? $_GET['pagina'] : 'default';
-        
-        $sqlPreguntas = "SELECT id_pregunta, titulo, descripcion, id_usuario FROM pregunta;";
+        $paginas = isset($_GET['pagina']) ? htmlspecialchars($_GET['pagina']) : 'default';
         
         // Creamos una variable (array) para los filtros y otra para los parametros
         // (filtrará todas las letras/números que estén en los filtros)
@@ -30,15 +28,24 @@
 
             case 'preguntas_personales':
                 
-                $sqlPreguntas = "SELECT id_pregunta, titulo, descripcion, id_usuario FROM pregunta WHERE id_usuario = :id_usuario;";
+                $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
+                usuario.id_usuario, usuario.username, usuario.nombre,
+                amigo.usuario1 AS amigo1, amigo.usuario2 AS amigo2, amigo.estado
+                FROM pregunta
+                INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
+                LEFT JOIN amigo ON (amigo.usuario1 = usuario.id_usuario OR amigo.usuario2 = usuario.id_usuario) AND (amigo.usuario1 = :id_usuario OR amigo.usuario2 = :id_usuario)
+                WHERE pregunta.id_usuario != :id_usuario";
                 $parametros[':id_usuario'] = $mi_usuario;
                 break;
 
             default:
 
                 $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
-                usuario.username, usuario.nombre
-                FROM pregunta INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
+                usuario.id_usuario, usuario.username, usuario.nombre,
+                amigo.usuario1 AS amigo1, amigo.usuario2 AS amigo2, amigo.estado
+                FROM pregunta
+                INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
+                LEFT JOIN amigo ON (amigo.usuario1 = usuario.id_usuario OR amigo.usuario2 = usuario.id_usuario) AND (amigo.usuario1 = :id_usuario OR amigo.usuario2 = :id_usuario)
                 WHERE pregunta.id_usuario != :id_usuario";
                 $parametros[':id_usuario'] = $mi_usuario;
                 break;
@@ -58,10 +65,19 @@
             $parametros[':titulo'] = '%' . $buscar_titulo . '%';
         }
 
+        ?>
+
+        <?php
+
         // Si hay filtros, los añadimos a la consulta
         if (!empty($filtros)) {
             $sqlPreguntas .= " AND " . implode(" AND ", $filtros);
         }
+
+        // echo "Consulta SQL: " . $sqlPreguntas . "<br>";
+        // echo "Parámetros: <pre>";
+        // print_r($parametros);
+        // echo "</pre>";
 
         $stmtPreguntas = $conn->prepare($sqlPreguntas);
 
@@ -90,34 +106,72 @@
         <div class="container-fluid">
 
             <!-- Botón para hacer el navbar responsive (mete todos los elementos en un responsive) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>
+            </button> -->
 
             <!-- FILTROS Y PÁGINAS -->
             <div class="collapse navbar-collapse divNavbar" id="navbarContent">
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
-                    <form class="form-inline my-2 my-lg-0 d-flex align-items-center" method="GET">
-                        <input class="form-control mr-sm-2" type="search" name="buscarNombre" placeholder="Buscar Nombre" aria-label="Buscar Nombre" value="<?php if(isset($_GET['buscarNombre'])) {echo $_GET['buscarNombre'];} ?>">
-                        <input class="form-control mr-sm-2" style="margin-left: 10px;" type="search" name="buscarTitulo" placeholder="Buscar Título" aria-label="Buscar Título" value="<?php if(isset($_GET['buscarTitulo'])) {echo $_GET['buscarTitulo'];} ?>">
-                        <button type="submit" class="btn btn-primary" style="height: 93%;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 21">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                            </svg>
-                        </button>
-                        <button type="submit" class="btn btn-danger" name="limpiar_filtros" style="height: 93%; margin-left: 10px; margin-right: 10px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 21">
-                                <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z"/>
-                            </svg>
-                        </button>
-                    </form>
+                    <!-- Navegación entre páginas -->
+                    <?php if ($paginas != 'preguntas_personales') : ?>
+                        
+                        <a href="?pagina=preguntas_personales">Preguntas personales</a>
+
+                    <?php else : ?>
+                        
+                        <a href="?pagina=default">Todas las preguntas</a>
+                        
+                    <?php endif; ?>
+
+                    <a href="./solicitudes_chat_y_amigos/amigos.php">Amigos</a>
+                    <a href="./solicitudes_chat_y_amigos/solicitudes.php">Solicitudes</a>
+
+                    <?php if ($paginas != 'preguntas_personales') : ?>
+
+                        <form class="form-inline my-2 my-lg-0 d-flex align-items-center" method="GET">
+                            <input class="form-control mr-sm-2" type="search" name="buscarNombre" placeholder="Buscar Nombre" aria-label="Buscar Nombre" value="<?php if(isset($_GET['buscarNombre'])) {echo $_GET['buscarNombre'];} ?>">
+                            <input class="form-control mr-sm-2" style="margin-left: 10px;" type="search" name="buscarTitulo" placeholder="Buscar Título" aria-label="Buscar Título" value="<?php if(isset($_GET['buscarTitulo'])) {echo $_GET['buscarTitulo'];} ?>">
+                            <input type="hidden" name="pagina" value="<?= $paginas ?>">
+                            <button type="submit" class="btn btn-primary" style="padding-top: 4px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-search" viewBox="0 0 16 21">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                </svg>
+                            </button>
+                            <button type="submit" class="btn btn-danger" name="limpiar_filtros" style="margin-left: 10px; margin-right: 10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 21">
+                                    <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z"/>
+                                </svg>
+                            </button>
+                        </form>
+
+                    <?php else : ?>
+
+                        <form class="form-inline my-2 my-lg-0 d-flex align-items-center" method="GET">
+                            <input type="hidden" name="pagina" value="<?= $paginas ?>">
+                            <input class="form-control mr-sm-2" style="margin-left: 10px;" type="search" name="buscarTitulo" placeholder="Buscar Título" aria-label="Buscar Título" value="<?php if(isset($_GET['buscarTitulo'])) {echo $_GET['buscarTitulo'];} ?>">
+                            <button type="submit" class="btn btn-primary" style="padding-top: 4px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-search" viewBox="0 0 16 21">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                </svg>
+                            </button>
+                            <button type="submit" class="btn btn-danger" name="limpiar_filtros" style="margin-left: 10px; margin-right: 10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 21">
+                                    <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    
+                    <?php endif; ?>
+
+                    
                     <?php
 
                         if (isset($_GET['limpiar_filtros'])) {
                             // Redirigir a la misma página sin parámetros
-                            header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+                            header("Location: ?pagina=".$paginas);
                             exit();
                         }
 
@@ -134,11 +188,18 @@
             </div>
         </div>
     </nav>
+
     <?php
 
         if (count($resultado) > 0) {
 
             foreach ($resultado as $fila) {
+
+                $idUsuario = htmlspecialchars($fila['id_usuario']);
+                $nombre = htmlspecialchars($fila['nombre']);
+                $usuario1 = htmlspecialchars($fila['amigo1']);
+                $usuario2 = htmlspecialchars($fila['amigo2']);
+                $estadoAmistad = htmlspecialchars($fila['estado']);
 
                 if ($paginas == 'preguntas_personales') {
                     echo "<div>";
@@ -147,12 +208,97 @@
                     echo "</div>";
                 }
                 else {
+
                     echo "<div>";
-                    echo "<h3>".$fila["username"]."</h3>";
+
+                    if ($estadoAmistad == 'amigo') {
+
+                        echo "<h3 id='usuario'>".$fila["username"]."</h3>";
+                        echo "<div>";
+                        echo "<p> Ya es tu amigo. </p>";
+                        echo "<form method='POST'>
+                                <input type='hidden' name='usuario1' value='$usuario1'>
+                                <input type='submit' value='Enviar un mensaje' name='Chat'>
+                            </form>";
+                        echo "</div>";
+    
+                    } elseif ($estadoAmistad == 'solicitado' && $usuario1 == $mi_usuario) {
+    
+                        echo "<h3 id='usuario'>".$fila["username"]."</h3>";
+                        echo "<p> Ya le has solicitado. </p>";
+                        echo "<form method='POST'>
+                                <input type='hidden' name='idUsuario' value='$idUsuario'>
+                                <input type='submit' value='Cancelar Solicitud' name='Cancelar'>
+                            </form>";
+    
+                    } elseif ($estadoAmistad == 'solicitado' && $usuario2 == $mi_usuario) {
+    
+                        echo "<h3 id='usuario'>".$fila["username"]."</h3>";
+                        echo "<p> Te ha solicitado. </p>";
+                        echo "<form method='POST'>
+                                <input type='submit' value='Ir a solicitudes' name='Solicitudes'>
+                            </form>";
+    
+                    } else {
+
+                        echo "<h3 id='usuario'>".$fila["username"]."</h3>";
+                        echo "<form method='POST'>
+                                <input type='hidden' name='idUsuario' value='$idUsuario'>
+                                <input type='submit' value='Solicitar' name='Solicitar'>
+                                </form>";
+                    
+                    }
+
                     echo "<h2>".$fila["titulo"]."</h2>";
                     echo "<p>".$fila["descripcion"]."</p>";
                     echo "</div>";
                 }
+            }
+
+            if (isset($_POST['Solicitar'])) {
+
+                $idUsuario = $_POST['idUsuario'];
+                $estadoAmigo = 'solicitado';
+        
+                $sqlRelacion = "INSERT INTO amigo (usuario1, usuario2, estado) VALUES (:usuario1, :usuario2, :estado)";
+                $stmtRelacion = $conn->prepare($sqlRelacion);
+                $stmtRelacion->bindParam(':usuario1', $mi_usuario);
+                $stmtRelacion->bindParam(':usuario2', $idUsuario);
+                $stmtRelacion->bindParam(':estado', $estadoAmigo);
+                $stmtRelacion->execute();
+        
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+        
+            }
+        
+            if (isset($_POST['Cancelar'])) {
+                $idUsuario = $_POST['idUsuario'];
+        
+                $sqlRelacion = "DELETE FROM amigo WHERE usuario1 = :usuario1 AND usuario2 = :usuario2";
+                $stmtRelacion = $conn->prepare($sqlRelacion);
+                $stmtRelacion->bindParam(':usuario1', $mi_usuario);
+                $stmtRelacion->bindParam(':usuario2', $idUsuario);
+                $stmtRelacion->execute();
+        
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            }
+
+            if (isset($_POST['Solicitudes'])) {
+
+                // Redireccionamos a la página
+                header("Location: " . "./solicitudes_chat_y_amigos/solicitudes.php");
+                exit();
+                
+            }
+
+            if (isset($_POST['Chat'])) {
+
+                // Redireccionamos a la página
+                header("Location: " . "./solicitudes_chat_y_amigos/chat.php?receptor=". urlencode($usuario1));
+                exit();
+                
             }
 
         } else {
@@ -162,16 +308,7 @@
         }
     ?>
 
-    <?php if ($paginas != 'preguntas_personales') : ?>
-
-        <a href="?pagina=preguntas_personales">Preguntas personales</a>
-
-    <?php else : ?>
-
-        <a href="?pagina=default">Todas las preguntas</a>
-
-    <?php endif; ?>
-
+    <script src="script.js"></script>
 
 </body>
 </html>
