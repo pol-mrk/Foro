@@ -32,8 +32,8 @@ $parametros[':id_usuario'] = $mi_usuario;
                 break;
 
             default:
-                $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
-                usuario.id_usuario, usuario.username, usuario.nombre,
+                $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario, pregunta.fecha_pregunta,
+                usuario.id_usuario, usuario.username, usuario.nombre, 
                 amigo.emisor AS amigo1, amigo.receptor AS amigo2, amigo.estado
                 FROM pregunta
                 INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
@@ -176,7 +176,9 @@ $parametros[':id_usuario'] = $mi_usuario;
                         <div class="card-body">
                         <a href="./respuestas.php?pregunta=<?php echo urlencode($row['id_pregunta']); ?>">
     <h5 class="card-title"><?= htmlspecialchars($row['titulo']); ?></h5>
-</a>                            <p class="card-text"><?= htmlspecialchars($row['descripcion']); ?></p>
+</a>                            
+<p><?= htmlspecialchars($row['fecha_pregunta']); ?></p>
+<p class="card-text"><?= htmlspecialchars($row['descripcion']); ?></p>
                             <p class="card-text">
                                 <small class="text-muted"><?= htmlspecialchars($row['nombre']); ?></small>
                             </p>

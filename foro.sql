@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS `pregunta` (
   `titulo` varchar(255) NOT NULL,
   `descripcion` text,
   `id_usuario` int DEFAULT NULL,
+  `fecha_pregunta` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   PRIMARY KEY (`id_pregunta`),
   KEY `id_usuario2_fk_idx` (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
