@@ -27,8 +27,8 @@
                 FROM pregunta
                 INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
                 LEFT JOIN amigo ON (amigo.emisor = usuario.id_usuario OR amigo.receptor = usuario.id_usuario) AND (amigo.emisor = :id_usuario OR amigo.receptor = :id_usuario)
-                WHERE pregunta.id_usuario != :id_usuario";
-                $parametros[':id_usuario'] = $mi_usuario;
+                WHERE pregunta.id_usuario = :id_usuario";  // Solo preguntas del usuario logueado
+$parametros[':id_usuario'] = $mi_usuario;
                 break;
 
             default:
@@ -122,6 +122,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página principal</title>
     <!-- Incluir Bootstrap CSS -->
+    <link rel="stylesheet" href="principal.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -152,10 +153,19 @@
                     <input type="hidden" name="pagina" value="<?= $paginas ?>">
                     <button class="btn btn-outline-success" type="submit">Buscar</button>
                 </form>
+
+                <!-- Botón de cierre de sesión -->
+                <form method="POST" action="login/logout.php" class="ms-3">
+                    <button type="submit" class="btn btn-outline-danger">Cerrar sesión</button>
+                </form>
             </ul>
         </div>
     </div>
 </nav>
+    <!-- Botón para crear una pregunta (debajo del navbar) -->
+    <div class="container mt-4 text-end">
+        <a href="crear_pregunta.php" class="btn btn-outline-primary">Crear pregunta</a>
+    </div>
 
     <div class="container mt-4">
         <div class="row">
@@ -170,16 +180,19 @@
                             <p class="card-text">
                                 <small class="text-muted"><?= htmlspecialchars($row['nombre']); ?></small>
                             </p>
-                            <form method="POST">
-                                <input type="hidden" name="idUsuario" value="<?= htmlspecialchars($row['id_usuario']); ?>">
-                                <?php if ($row['estado'] == 'solicitado') : ?>
-                                    <button type="submit" name="Cancelar" class="btn btn-danger">Cancelar solicitud</button>
-                                <?php elseif ($row['estado'] == 'aceptado') : ?>
-                                    <button type="submit" name="Chat" class="btn btn-success">Iniciar chat</button>
-                                <?php else : ?>
-                                    <button type="submit" name="Solicitar" class="btn btn-primary">Solicitar amistad</button>
-                                <?php endif; ?>
-                            </form>
+                            <?php if ($paginas != 'preguntas_personales') : ?>
+                    <form method="POST">
+                        <input type="hidden" name="idUsuario" value="<?= htmlspecialchars($row['id_usuario']); ?>">
+
+                        <?php if ($row['estado'] == 'solicitado') : ?>
+                            <button type="submit" name="Cancelar" class="btn btn-danger">Cancelar solicitud</button>
+                        <?php elseif ($row['estado'] == 'aceptado') : ?>
+                            <button type="submit" name="Chat" class="btn btn-success">Iniciar chat</button>
+                        <?php else : ?>
+                            <button type="submit" name="Solicitar" class="btn btn-primary">Solicitar amistad</button>
+                        <?php endif; ?>
+                    </form>
+                <?php endif; ?>
                         </div>
                     </div>
                 </div>

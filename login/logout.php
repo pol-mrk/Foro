@@ -2,6 +2,8 @@
 
 session_start();
 
+include("../conexion.php");
+
 if (isset($_SESSION['loggedin'])  && isset($_SESSION['id_usuario'])) {
 
     include_once "../conexion.php"; // Asegúrate de que este archivo use MySQLi

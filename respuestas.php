@@ -54,6 +54,19 @@ $stmt2->execute();
 
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <a href="./pagina_principal.php" class="nav-link">Volver a preguntas</a>
+                    <a href="login/logout.php" class="btn btn-outline-danger ms-3">Cerrar sesión</a>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <?php
 // Verificar si hay resultados
 if ($stmt1->rowCount() > 0) {
@@ -68,9 +81,6 @@ if ($stmt1->rowCount() > 0) {
     }
 }
 ?>
-
-<a href="./pagina_principal.php" class="btn btn-secondary mb-3">Volver atrás</a>
-
 
 <form action="./comentar.php" id="formComentar" method="post">
     <label for="comentar" id="labelComentar">Tu respuesta:</label>

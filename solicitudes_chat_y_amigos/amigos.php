@@ -16,29 +16,49 @@
     <title>Menú principal (Amigos)</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header style="display: flex; justify-content: space-between;">
-        <div>
-            <h1>Mis Amigos</h1>
-        </div>
-        <div>
-            <a href="solicitudes.php" style="color: white;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                </svg>
-            </a>
-            <a href="../pagina_principal.php" style="color: white;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="blacks" class="bi bi-house-fill" viewBox="0 0 16 16">
-                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
-                    <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
-                </svg>
-            </a>
-        </div>
-        
+    <!-- Header con barra de navegación -->
+    <header class="bg-dark text-white">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Botón de hamburguesa para pantallas pequeñas -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Menú de navegación -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="solicitudes.php">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../pagina_principal.php">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="bi bi-house-fill" viewBox="0 0 16 16">
+                                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                                    <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <form method="POST" action="login/logout.php" class="ms-3">
+                    <button type="submit" class="btn btn-outline-danger">Cerrar sesión</button>
+                </form>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
-    <div class="container">
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Lista de Amigos</h2>
+        
         <?php
             $estado = 'amigo';
 
@@ -66,26 +86,26 @@
                     // Mostrar el nombre del amigo y el estado de la conexión
                     if ($emisor != $mi_usuario) {
                         ?>
-                        <div class="amigo">
+                        <div class="amigo p-3 mb-3 bg-light rounded">
                             <p><?php echo htmlspecialchars($nombreAmigo1); ?></p>
                             <div>
-                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($emisor)); ?>" style="color: white;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($emisor)); ?>" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
                                         <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
-                                    </svg>
+                                    </svg> Chat
                                 </a>
                             </div>
                         </div>
                         <?php
                     } elseif ($receptor != $mi_usuario) {
                         ?>
-                        <div class="amigo">
+                        <div class="amigo p-3 mb-3 bg-light rounded">
                             <p><?php echo htmlspecialchars($nombreAmigo2); ?></p>
                             <div>
-                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($receptor)); ?>" style="color: white;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($receptor)); ?>" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
                                         <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
-                                    </svg>
+                                    </svg> Chat
                                 </a>
                             </div>
                         </div>
@@ -97,6 +117,9 @@
             }
         ?>
     </div>
+
+    <!-- Script de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 <?php

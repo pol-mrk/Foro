@@ -131,9 +131,12 @@ hr:after {
 
 }
 
-.respuesta2 {
+.respuesta2, .fechaRespuesta {
     font-size: 2.5vw;
+    margin-bottom: 0.5vh;
 }
+
+
 
 
 }
