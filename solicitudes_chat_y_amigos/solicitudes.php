@@ -50,11 +50,11 @@ if (!isset($_SESSION['loggedin']) && !isset($_SESSION['id_usuario'])) {
         $estado = 'solicitado';
 
         // Consulta para obtener las solicitudes de amistad
-        $sqlAmigos = "SELECT usuario1, usuario2, amigo.estado, usuario_amigo1.username AS amigo1, usuario_amigo2.username AS amigo2 
+        $sqlAmigos = "SELECT emisor, receptor, amigo.estado, usuario_amigo1.username AS amigo1, usuario_amigo2.username AS amigo2 
                       FROM amigo
-                      INNER JOIN usuario AS usuario_amigo1 ON usuario_amigo1.id_usuario = amigo.usuario1
-                      INNER JOIN usuario AS usuario_amigo2 ON usuario_amigo2.id_usuario = amigo.usuario2
-                      WHERE amigo.usuario2 = :usuario AND amigo.estado = :estado";
+                      INNER JOIN usuario AS usuario_amigo1 ON usuario_amigo1.id_usuario = amigo.emisor
+                      INNER JOIN usuario AS usuario_amigo2 ON usuario_amigo2.id_usuario = amigo.receptor
+                      WHERE amigo.receptor = :usuario AND amigo.estado = :estado";
 
         $stmtAmigos = $conn->prepare($sqlAmigos);
         $stmtAmigos->bindParam(':usuario', $mi_usuario);
@@ -65,15 +65,15 @@ if (!isset($_SESSION['loggedin']) && !isset($_SESSION['id_usuario'])) {
 
             // Mostrar la lista de solicitudes de amistad
             while ($row = $stmtAmigos->fetch(PDO::FETCH_ASSOC)) {
-                $usuario1 = $row['usuario1'];
-                $usuario2 = $row['usuario2'];
+                $emisor = $row['emisor'];
+                $receptor = $row['receptor'];
                 $estadoAmistad = $row['estado'];
                 $nombreAmigo1 = $row['amigo1'];
                 $nombreAmigo2 = $row['amigo2'];
 
                 echo "<p><strong>" . htmlspecialchars($nombreAmigo1) . "</strong></p>";
                 echo '<form method="POST">
-                        <input type="hidden" name="id_amigo" value="' . htmlspecialchars($usuario2) . '">
+                        <input type="hidden" name="id_amigo" value="' . htmlspecialchars($receptor) . '">
                         <input type="submit" value="Aceptar" name="Aceptar">
                         <input type="submit" value="Rechazar" name="Rechazar">
                     </form>';
@@ -84,7 +84,7 @@ if (!isset($_SESSION['loggedin']) && !isset($_SESSION['id_usuario'])) {
 
                 $idAmigo = $_POST['id_amigo'];
                 $estadoAmigo = 'amigo';
-                $sqlRelacion = "UPDATE amigo SET estado = :estado WHERE usuario2 = :id_amigo";
+                $sqlRelacion = "UPDATE amigo SET estado = :estado WHERE receptor = :id_amigo";
                 $stmtRelacion = $conn->prepare($sqlRelacion);
                 $stmtRelacion->bindParam(':estado', $estadoAmigo);
                 $stmtRelacion->bindParam(':id_amigo', $idAmigo);
@@ -98,7 +98,7 @@ if (!isset($_SESSION['loggedin']) && !isset($_SESSION['id_usuario'])) {
 
                 $idAmigo = $_POST['id_amigo'];
                 $estadoRechazado = 'rechazado';
-                $sqlRelacion = "UPDATE amigo SET estado = :estado WHERE usuario2 = :id_amigo";
+                $sqlRelacion = "UPDATE amigo SET estado = :estado WHERE receptor = :id_amigo";
                 $stmtRelacion = $conn->prepare($sqlRelacion);
                 $stmtRelacion->bindParam(':estado', $estadoRechazado);
                 $stmtRelacion->bindParam(':id_amigo', $idAmigo);

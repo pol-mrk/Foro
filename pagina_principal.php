@@ -30,10 +30,10 @@
                 
                 $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
                 usuario.id_usuario, usuario.username, usuario.nombre,
-                amigo.usuario1 AS amigo1, amigo.usuario2 AS amigo2, amigo.estado
+                amigo.emisor AS amigo1, amigo.receptor AS amigo2, amigo.estado
                 FROM pregunta
                 INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
-                LEFT JOIN amigo ON (amigo.usuario1 = usuario.id_usuario OR amigo.usuario2 = usuario.id_usuario) AND (amigo.usuario1 = :id_usuario OR amigo.usuario2 = :id_usuario)
+                LEFT JOIN amigo ON (amigo.emisor = usuario.id_usuario OR amigo.receptor = usuario.id_usuario) AND (amigo.emisor = :id_usuario OR amigo.receptor = :id_usuario)
                 WHERE pregunta.id_usuario != :id_usuario";
                 $parametros[':id_usuario'] = $mi_usuario;
                 break;
@@ -42,10 +42,10 @@
 
                 $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
                 usuario.id_usuario, usuario.username, usuario.nombre,
-                amigo.usuario1 AS amigo1, amigo.usuario2 AS amigo2, amigo.estado
+                amigo.emisor AS amigo1, amigo.receptor AS amigo2, amigo.estado
                 FROM pregunta
                 INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
-                LEFT JOIN amigo ON (amigo.usuario1 = usuario.id_usuario OR amigo.usuario2 = usuario.id_usuario) AND (amigo.usuario1 = :id_usuario OR amigo.usuario2 = :id_usuario)
+                LEFT JOIN amigo ON (amigo.emisor = usuario.id_usuario OR amigo.receptor = usuario.id_usuario) AND (amigo.emisor = :id_usuario OR amigo.receptor = :id_usuario)
                 WHERE pregunta.id_usuario != :id_usuario";
                 $parametros[':id_usuario'] = $mi_usuario;
                 break;
@@ -63,6 +63,52 @@
         if ($buscar_titulo != "") {
             $filtros[] = "pregunta.titulo LIKE :titulo";
             $parametros[':titulo'] = '%' . $buscar_titulo . '%';
+        }
+
+        if (isset($_POST['Solicitar'])) {
+
+            $idUsuario = $_POST['idUsuario'];
+            $estadoAmigo = 'solicitado';
+    
+            $sqlRelacion = "INSERT INTO amigo (emisor, receptor, estado) VALUES (:emisor, :receptor, :estado)";
+            $stmtRelacion = $conn->prepare($sqlRelacion);
+            $stmtRelacion->bindParam(':emisor', $mi_usuario);
+            $stmtRelacion->bindParam(':receptor', $idUsuario);
+            $stmtRelacion->bindParam(':estado', $estadoAmigo);
+            $stmtRelacion->execute();
+    
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+    
+        }
+    
+        if (isset($_POST['Cancelar'])) {
+            $idUsuario = $_POST['idUsuario'];
+    
+            $sqlRelacion = "DELETE FROM amigo WHERE emisor = :emisor AND receptor = :receptor";
+            $stmtRelacion = $conn->prepare($sqlRelacion);
+            $stmtRelacion->bindParam(':emisor', $mi_usuario);
+            $stmtRelacion->bindParam(':receptor', $idUsuario);
+            $stmtRelacion->execute();
+    
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
+        if (isset($_POST['Solicitudes'])) {
+
+            // Redireccionamos a la página
+            header("Location: " . "./solicitudes_chat_y_amigos/solicitudes.php");
+            exit();
+            
+        }
+
+        if (isset($_POST['Chat'])) {
+
+            // Redireccionamos a la página
+            header("Location: " . "./solicitudes_chat_y_amigos/chat.php?receptor=". urlencode($emisor));
+            exit();
+            
         }
 
         ?>
@@ -197,9 +243,9 @@
 
                 $idUsuario = htmlspecialchars($fila['id_usuario']);
                 $nombre = htmlspecialchars($fila['nombre']);
-                $usuario1 = htmlspecialchars($fila['amigo1']);
-                $usuario2 = htmlspecialchars($fila['amigo2']);
-                $estadoAmistad = htmlspecialchars($fila['estado']);
+                $emisor = isset($fila['amigo1']) ? htmlspecialchars($fila['amigo1']) : null;
+                $receptor = isset($fila['amigo2']) ? htmlspecialchars($fila['amigo2']) : null;
+                $estadoAmistad = isset($fila['estado']) ? htmlspecialchars($fila['estado']) : null;
 
                 if ($paginas == 'preguntas_personales') {
                     echo "<div>";
@@ -217,12 +263,12 @@
                         echo "<div>";
                         echo "<p> Ya es tu amigo. </p>";
                         echo "<form method='POST'>
-                                <input type='hidden' name='usuario1' value='$usuario1'>
+                                <input type='hidden' name='emisor' value='$emisor'>
                                 <input type='submit' value='Enviar un mensaje' name='Chat'>
                             </form>";
                         echo "</div>";
     
-                    } elseif ($estadoAmistad == 'solicitado' && $usuario1 == $mi_usuario) {
+                    } elseif ($estadoAmistad == 'solicitado' && $emisor == $mi_usuario) {
     
                         echo "<h3 id='usuario'>".$fila["username"]."</h3>";
                         echo "<p> Ya le has solicitado. </p>";
@@ -231,7 +277,7 @@
                                 <input type='submit' value='Cancelar Solicitud' name='Cancelar'>
                             </form>";
     
-                    } elseif ($estadoAmistad == 'solicitado' && $usuario2 == $mi_usuario) {
+                    } elseif ($estadoAmistad == 'solicitado' && $receptor == $mi_usuario) {
     
                         echo "<h3 id='usuario'>".$fila["username"]."</h3>";
                         echo "<p> Te ha solicitado. </p>";
@@ -255,51 +301,7 @@
                 }
             }
 
-            if (isset($_POST['Solicitar'])) {
-
-                $idUsuario = $_POST['idUsuario'];
-                $estadoAmigo = 'solicitado';
-        
-                $sqlRelacion = "INSERT INTO amigo (usuario1, usuario2, estado) VALUES (:usuario1, :usuario2, :estado)";
-                $stmtRelacion = $conn->prepare($sqlRelacion);
-                $stmtRelacion->bindParam(':usuario1', $mi_usuario);
-                $stmtRelacion->bindParam(':usuario2', $idUsuario);
-                $stmtRelacion->bindParam(':estado', $estadoAmigo);
-                $stmtRelacion->execute();
-        
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit();
-        
-            }
-        
-            if (isset($_POST['Cancelar'])) {
-                $idUsuario = $_POST['idUsuario'];
-        
-                $sqlRelacion = "DELETE FROM amigo WHERE usuario1 = :usuario1 AND usuario2 = :usuario2";
-                $stmtRelacion = $conn->prepare($sqlRelacion);
-                $stmtRelacion->bindParam(':usuario1', $mi_usuario);
-                $stmtRelacion->bindParam(':usuario2', $idUsuario);
-                $stmtRelacion->execute();
-        
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit();
-            }
-
-            if (isset($_POST['Solicitudes'])) {
-
-                // Redireccionamos a la página
-                header("Location: " . "./solicitudes_chat_y_amigos/solicitudes.php");
-                exit();
-                
-            }
-
-            if (isset($_POST['Chat'])) {
-
-                // Redireccionamos a la página
-                header("Location: " . "./solicitudes_chat_y_amigos/chat.php?receptor=". urlencode($usuario1));
-                exit();
-                
-            }
+            
 
         } else {
 
@@ -314,4 +316,4 @@
 </html>
 <?php
     }
-?>
+?> 

@@ -43,11 +43,11 @@
             $estado = 'amigo';
 
             // Consulta para obtener los amigos
-            $sqlAmigos = "SELECT usuario1, usuario2, amigo.estado, usuario_amigo1.nombre AS amigo1, usuario_amigo2.nombre AS amigo2 
+            $sqlAmigos = "SELECT emisor, receptor, amigo.estado, usuario_amigo1.nombre AS amigo1, usuario_amigo2.nombre AS amigo2 
                           FROM amigo
-                          INNER JOIN usuario AS usuario_amigo1 ON usuario_amigo1.id_usuario = amigo.usuario1
-                          INNER JOIN usuario AS usuario_amigo2 ON usuario_amigo2.id_usuario = amigo.usuario2
-                          WHERE (amigo.usuario1 = :usuario OR amigo.usuario2 = :usuario) AND amigo.estado = :estado";
+                          INNER JOIN usuario AS usuario_amigo1 ON usuario_amigo1.id_usuario = amigo.emisor
+                          INNER JOIN usuario AS usuario_amigo2 ON usuario_amigo2.id_usuario = amigo.receptor
+                          WHERE (amigo.emisor = :usuario OR amigo.receptor = :usuario) AND amigo.estado = :estado";
 
             $stmtAmigos = $conn->prepare($sqlAmigos);
             $stmtAmigos->bindParam(':usuario', $mi_usuario);
@@ -57,19 +57,19 @@
             if ($stmtAmigos->rowCount() > 0) {
                 // Mostrar la lista de amigos
                 while ($row = $stmtAmigos->fetch(PDO::FETCH_ASSOC)) {
-                    $usuario1 = $row['usuario1'];
-                    $usuario2 = $row['usuario2'];
+                    $emisor = $row['emisor'];
+                    $receptor = $row['receptor'];
                     $estadoAmistad = $row['estado'];
                     $nombreAmigo1 = $row['amigo1'];
                     $nombreAmigo2 = $row['amigo2'];
 
                     // Mostrar el nombre del amigo y el estado de la conexión
-                    if ($usuario1 != $mi_usuario) {
+                    if ($emisor != $mi_usuario) {
                         ?>
                         <div class="amigo">
                             <p><?php echo htmlspecialchars($nombreAmigo1); ?></p>
                             <div>
-                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($usuario1)); ?>" style="color: white;">
+                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($emisor)); ?>" style="color: white;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
                                         <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
                                     </svg>
@@ -77,12 +77,12 @@
                             </div>
                         </div>
                         <?php
-                    } elseif ($usuario2 != $mi_usuario) {
+                    } elseif ($receptor != $mi_usuario) {
                         ?>
                         <div class="amigo">
                             <p><?php echo htmlspecialchars($nombreAmigo2); ?></p>
                             <div>
-                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($usuario2)); ?>" style="color: white;">
+                                <a href="./chat.php?receptor=<?php echo urlencode(htmlspecialchars($receptor)); ?>" style="color: white;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
                                         <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
                                     </svg>
