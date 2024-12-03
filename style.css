@@ -1,6 +1,7 @@
 html {
     height: 100vh;
     width: 100vw;
+    overflow-x:hidden !important
 }
 
 html * {
@@ -20,6 +21,10 @@ html * {
     margin-top: 0;
 }
 
+.error {
+    color:red;
+}
+
 .divPregunta {
     margin: 4vh 25vw 0px 25vw;
     max-width: 50vw;
@@ -31,8 +36,13 @@ html * {
 }
 
 .respuesta {
-    font-size: 1vw;
-    margin-top: 5vh;
+    font-size: 1.5vw;
+    margin-top: 4vh;
+}
+
+#otrasRespuestas {
+    margin-top:2vh;
+    margin-left:25vw
 }
 
 hr {
@@ -60,7 +70,6 @@ hr:after {
 #formComentar {
     margin-left: 25vw;
     width: 50%;
-    margin-top: 7vh;
 }
 
 #comentar {
@@ -76,6 +85,10 @@ hr:after {
 
 #labelComentar {
     font-size: 1.2vw;
+}
+
+.btn-secondary {
+    margin-left: 25vw
 }
 
 
@@ -99,4 +112,28 @@ hr:after {
         margin: 4vh 10vw 0px 10vw;
         max-width: 80%;
     }
+
+    .btn {
+        font-size: 2.5vw;
+        padding:5px
+    }
+
+    #labelComentar, #otrasRespuestas, .respuesta {
+        font-size: 4vw;
+    }
+
+#comentar {
+    font-size: 3vw;
+}
+
+.error {
+    font-size: 3vw;
+
+}
+
+.respuesta2 {
+    font-size: 2.5vw;
+}
+
+
 }

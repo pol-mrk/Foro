@@ -77,6 +77,8 @@ CREATE TABLE IF NOT EXISTS `respuesta` (
   `descripcion` text,
   `id_pregunta` int DEFAULT NULL,
   `id_usuario` int DEFAULT NULL,
+  `fecha_respuesta` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   PRIMARY KEY (`id_respuesta`),
   KEY `id_pregunta_fk` (`id_pregunta`),
   KEY `id_usuario_fk_idx` (`id_usuario`)
