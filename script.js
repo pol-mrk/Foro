@@ -1,0 +1,1 @@
+var usuario = document.getElementById("usuario");
