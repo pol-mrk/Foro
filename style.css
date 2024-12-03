@@ -1,0 +1,102 @@
+html {
+    height: 100vh;
+    width: 100vw;
+}
+
+html * {
+    font-family: "Golos Text", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.tituloPregunta {
+    font-size: 2.5vw;
+}
+
+.pregunta {
+    font-size: 1.5vw;
+    margin-left: 5vw;
+    margin-top: 0;
+}
+
+.divPregunta {
+    margin: 4vh 25vw 0px 25vw;
+    max-width: 50vw;
+}
+
+.divRespuesta {
+    margin: 0px 20vw 0px 20vw;
+    max-width: 60vw;
+}
+
+.respuesta {
+    font-size: 1vw;
+    margin-top: 5vh;
+}
+
+hr {
+    overflow: visible;
+    /* For IE */
+    padding: 0;
+    border: none;
+    border-top: medium double #333;
+    color: #333;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+hr:after {
+    content: "§";
+    display: inline-block;
+    position: relative;
+    top: -0.7em;
+    font-size: 2vw;
+    /* Ajustado a un valor relativo */
+    padding: 0 0.25em;
+    background: white;
+}
+
+#formComentar {
+    margin-left: 25vw;
+    width: 50%;
+    margin-top: 7vh;
+}
+
+#comentar {
+    width: 100%;
+    resize: none;
+    font-size: 1vw;
+    font-weight: 100;
+    border-radius: 8px;
+    margin-top: 2vh;
+    padding: 5px;
+    border-color: rgb(177, 177, 177);
+}
+
+#labelComentar {
+    font-size: 1.2vw;
+}
+
+
+/* Mejorando la responsividad */
+
+@media (max-width: 768px) {
+    hr:after {
+        font-size: 4vw;
+        /* Más pequeño en pantallas pequeñas */
+    }
+    .tituloPregunta {
+        font-size: 5vw;
+        /* Ajusta el tamaño del título también */
+    }
+    .pregunta {
+        font-size: 3vw;
+        margin-left: 10vw;
+        /* Ajusta el tamaño de la pregunta */
+    }
+    .divPregunta {
+        margin: 4vh 10vw 0px 10vw;
+        max-width: 80%;
+    }
+}
