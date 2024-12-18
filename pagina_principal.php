@@ -21,14 +21,14 @@
         // CAMBIAR ENTRE PÁGINAS (OCUPACIONES / SALAS / SALAS MÁS USADAS / HISTORIAL MESAS)
         switch ($paginas) {
             case 'preguntas_personales':
-                $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario,
+                $sqlPreguntas = "SELECT pregunta.id_pregunta, pregunta.titulo, pregunta.descripcion, pregunta.id_usuario, pregunta.fecha_pregunta,
                 usuario.id_usuario, usuario.username, usuario.nombre,
                 amigo.emisor AS amigo1, amigo.receptor AS amigo2, amigo.estado
                 FROM pregunta
                 INNER JOIN usuario ON usuario.id_usuario = pregunta.id_usuario
                 LEFT JOIN amigo ON (amigo.emisor = usuario.id_usuario OR amigo.receptor = usuario.id_usuario) AND (amigo.emisor = :id_usuario OR amigo.receptor = :id_usuario)
                 WHERE pregunta.id_usuario = :id_usuario";  // Solo preguntas del usuario logueado
-$parametros[':id_usuario'] = $mi_usuario;
+                $parametros[':id_usuario'] = $mi_usuario;
                 break;
 
             default:
@@ -174,27 +174,31 @@ $parametros[':id_usuario'] = $mi_usuario;
                 <div class="col-md-4 mb-3">
                     <div class="card">
                         <div class="card-body">
-                        <a href="./respuestas.php?pregunta=<?php echo urlencode($row['id_pregunta']); ?>">
-    <h5 class="card-title"><?= htmlspecialchars($row['titulo']); ?></h5>
-</a>                            
-<p><?= htmlspecialchars($row['fecha_pregunta']); ?></p>
-<p class="card-text"><?= htmlspecialchars($row['descripcion']); ?></p>
+                            <a href="./respuestas.php?pregunta=<?php echo urlencode($row['id_pregunta']); ?>">
+                                <h5 class="card-title"><?= htmlspecialchars($row['titulo']); ?></h5>
+                            </a>                            
+                            <p><?= htmlspecialchars($row['fecha_pregunta']); ?></p>
+                            <p class="card-text"><?= htmlspecialchars($row['descripcion']); ?></p>
                             <p class="card-text">
                                 <small class="text-muted"><?= htmlspecialchars($row['nombre']); ?></small>
                             </p>
                             <?php if ($paginas != 'preguntas_personales') : ?>
-                    <form method="POST">
-                        <input type="hidden" name="idUsuario" value="<?= htmlspecialchars($row['id_usuario']); ?>">
+                            <form method="POST">
 
-                        <?php if ($row['estado'] == 'solicitado') : ?>
-                            <button type="submit" name="Cancelar" class="btn btn-danger">Cancelar solicitud</button>
-                        <?php elseif ($row['estado'] == 'aceptado') : ?>
-                            <button type="submit" name="Chat" class="btn btn-success">Iniciar chat</button>
-                        <?php else : ?>
-                            <button type="submit" name="Solicitar" class="btn btn-primary">Solicitar amistad</button>
-                        <?php endif; ?>
-                    </form>
-                <?php endif; ?>
+                                
+                                <input type="hidden" name="idUsuario" value="<?= htmlspecialchars($row['id_usuario']); ?>">
+
+                                <?php if ($row['estado'] == 'solicitado' && $row['amigo1'] == $mi_usuario ) : ?>
+                                    <button type="submit" name="Cancelar" class="btn btn-danger">Cancelar solicitud</button>
+                                <?php elseif ($row['estado'] == 'solicitado' && $row['amigo2'] == $mi_usuario) : ?>
+                                    <button type="submit" name="Solicitudes" class="btn btn-danger">Te ha solicitado</button>
+                                <?php elseif ($row['estado'] == 'amigo') : ?>
+                                    <button type="submit" name="Chat" class="btn btn-success">Iniciar chat</button>
+                                <?php else : ?>
+                                    <button type="submit" name="Solicitar" class="btn btn-primary">Solicitar amistad</button>
+                                <?php endif; ?>
+                            </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

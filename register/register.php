@@ -45,7 +45,7 @@
                 </div>
                 <div class="inputs">
                     <label for="contraseña">Contraseña:</label>
-                    <input type="contraseña" class="form-control" name="contraseña" id="contraseña">
+                    <input type="password" class="form-control" name="contraseña" id="contraseña">
                     <?php
                     if (isset($_GET['contrasenaVacio'])) {echo "<br><br><p class='editaContraseña'>Escribe tu contraseña</p>"; }
                     if (isset($_GET['passwordMal8car'])) {echo "<br><br><p class='editaContraseña'>La contraseña debe tener al menos 8 caracteres.</p>";}
